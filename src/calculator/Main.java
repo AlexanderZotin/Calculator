@@ -17,7 +17,7 @@ public class Main {
         view.subscribeToListener(new Listener(view));
         CalculatorModel model = new Engine();
         controller = new Controller(view, model);
-		SwingUtilities.invokeLater(() -> view.setVisible(true));
+        SwingUtilities.invokeLater(() -> view.setVisible(true));
     }
 
     public static CalculatorController getController() {
