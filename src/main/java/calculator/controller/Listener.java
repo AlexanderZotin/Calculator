@@ -1,9 +1,9 @@
-package calculator.view;
+package calculator.controller;
 
 import calculator.Utils;
-import calculator.controller.CalculatorController;
 import calculator.model.CalculatorModel;
 import calculator.model.TooLargeNumberException;
+import calculator.view.View;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;

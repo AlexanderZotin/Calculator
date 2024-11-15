@@ -4,7 +4,7 @@ import javax.swing.SwingUtilities;
 
 import calculator.controller.ControllerImplementation;
 import calculator.model.Engine;
-import calculator.view.Listener;
+import calculator.controller.Listener;
 import calculator.view.Window;
 
 public class Main {

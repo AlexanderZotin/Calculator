@@ -2,6 +2,7 @@ package calculator.view;
 
 import javax.swing.JButton;
 
+import calculator.controller.Listener;
 import lombok.NonNull;
 
 public interface View {
