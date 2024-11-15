@@ -3,18 +3,17 @@ package calculator.controller;
 import calculator.Utils;
 import calculator.model.CalculatorModel;
 import calculator.view.View;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
-public class Controller implements CalculatorController {
-    private final View view;
+@NonNull
+@AllArgsConstructor
+public class ControllerImplementation implements CalculatorController {
+    private final @Getter View view;
     private final CalculatorModel model;
-
-    public Controller(View view, CalculatorModel model) {
-        this.view = Objects.requireNonNull(view, "Параметр view не должен быть null!");
-        this.model = Objects.requireNonNull(model, "Параметр model не должен быть null!");
-    }
 
     @Override
     public void cleanAllData() {
@@ -37,7 +36,7 @@ public class Controller implements CalculatorController {
     }
 
     @Override
-    public void digitEntered(String digit) {
+    public void digitEntered(@NonNull String digit) {
         view.setMainDisplayText(view.getMainDisplayText() + digit);
         if(model.getOperation() == null) {
             model.setFirstNumber(new BigDecimal(view.getMainDisplayText()));

@@ -1,11 +1,12 @@
 package calculator;
 
 import java.math.BigDecimal;
-import java.util.Objects;
+
+import lombok.NonNull;
 
 public final class Utils {
     private Utils() {
-        throw new AssertionError("Не должно быть экземпляров класс Utils!");
+        throw new AssertionError("No instances of class Utils for you!");
     }
 
     public static boolean isPositiveNum(String str) {
@@ -18,8 +19,7 @@ public final class Utils {
         return true;
     }
 
-    public static BigDecimal removeLastDigit(BigDecimal number) {
-        Objects.requireNonNull(number);
+    public static BigDecimal removeLastDigit(@NonNull BigDecimal number) {
         String numberAsString = number.toPlainString();
         if(numberAsString.length() == 1) return BigDecimal.ZERO;
         else return new BigDecimal(numberAsString.substring(0, numberAsString.length() - 1));
@@ -30,15 +30,15 @@ public final class Utils {
          return displayText.substring(0, displayText.length() - 1);
     }
 
-    public static boolean isWhole(BigDecimal number) {
+    public static boolean isWhole(@NonNull BigDecimal number) {
         return number.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0;
     }
 
-    public static boolean isGreaterThen(BigDecimal number, BigDecimal then) {
+    public static boolean isGreaterThen(@NonNull BigDecimal number, @NonNull BigDecimal then) {
         return number.compareTo(then) > 0;
     }
 
     public static boolean isNumberTooLarge(BigDecimal number) {
-        return isGreaterThen(number, new BigDecimal("999999999999999999999999999999999999999999999999999"));
+        return isGreaterThen(number, new BigDecimal("999999999999999999999"));
     }
 }

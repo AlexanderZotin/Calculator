@@ -3,6 +3,8 @@ package calculator.model;
 import java.math.BigDecimal;
 import java.util.NoSuchElementException;
 
+import lombok.AllArgsConstructor;
+
 public interface CalculatorModel {
     void setFirstNumber(BigDecimal number);
     void setSecondNumber(BigDecimal secondNumber);
@@ -11,6 +13,7 @@ public interface CalculatorModel {
     BigDecimal getFirstNumber();
     BigDecimal getSecondNumber();
 
+    @AllArgsConstructor
     enum Operation {
         ADD('+'),
         SUBTRACT('-'),
@@ -19,10 +22,6 @@ public interface CalculatorModel {
         EXPONENTIATION('^');
 
         private final char designation;
-
-        Operation(char designation) {
-            this.designation = designation;
-        }
 
         public static Operation getOperationByDesignation(char designation) {
             for(Operation currentCandidate : Operation.values()) {

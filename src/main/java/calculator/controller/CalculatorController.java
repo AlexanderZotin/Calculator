@@ -1,8 +1,10 @@
 package calculator.controller;
 
 import calculator.model.CalculatorModel;
+import calculator.view.View;
 
 public interface CalculatorController {
+    View getView();
     void cleanAllData();
     void removeLastDigit();
     void digitEntered(String digit);

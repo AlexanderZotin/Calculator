@@ -1,53 +1,33 @@
 package calculator.model;
 
-import calculator.Utils;
+import static calculator.Utils.*;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Objects;
 
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@NonNull
+@Setter
+@ToString
 public class Engine implements CalculatorModel {
     private BigDecimal firstNumber = BigDecimal.ZERO;
     private BigDecimal secondNumber = BigDecimal.ZERO;
     private Operation operation;
     private static final MathContext mathContext = new MathContext(10);
-
-    @Override
-    public void setFirstNumber(BigDecimal firstNumber) {
-        this.firstNumber = Objects.requireNonNull(firstNumber, "Параметр firstNumber не может быть null!");
-    }
-
-    @Override
-    public void setSecondNumber(BigDecimal secondNumber) {
-        this.secondNumber = Objects.requireNonNull(secondNumber, "Параметр firstNumber не может быть null!");
-    }
-
-    @Override
-    public void setOperation(Operation operation) {
-        this.operation = operation;
-    }
-
-    @Override
-    public Operation getOperation() {
-        return operation;
-    }
-
-    @Override
-    public BigDecimal getFirstNumber() {
-        return firstNumber;
-    }
-
-    @Override
-    public BigDecimal getSecondNumber() {
-        return secondNumber;
-    }
-
+    
     /**
      * @throws ArithmeticException if operation is division
      * and divider is zero.
      * @throws TooLargeNumberException if operation is exponentiation
-     * and exponent is greater than  999999999
+     * and exponent is greater than  20
+     * @throws TooLargeNumberException if firstNumber is greater then 
+     * 1000 and exponent is greater then 5
      * @throws TooLargeNumberException if first or
      * second number is too large
      * @throws UnsupportedOperationException if operation is
@@ -58,7 +38,6 @@ public class Engine implements CalculatorModel {
      * secondNumber are null.
      * @see Utils#isNumberTooLarge(BigDecimal)
      * */
-    @SuppressWarnings("UnnecessaryDefault")
     @Override
     public BigDecimal count() {
         checkData();
@@ -68,20 +47,20 @@ public class Engine implements CalculatorModel {
             case MULTIPLE -> firstNumber.multiply(secondNumber);
             case DIVIDE -> divide();
             case EXPONENTIATION -> pow();
-            default -> throw new UnsupportedOperationException("Неизвестная операция: " + operation);
+            default -> throw new UnsupportedOperationException("Unknown operation: " + operation);
         };
         return result.stripTrailingZeros();
     }
 
     private void checkData() {
         if(operation == null) {
-            throw new IllegalStateException("Операция ещё неизвестна!");
+            throw new IllegalStateException("Operation is now unknown!");
         }
         if(firstNumber == null || secondNumber == null) {
-            throw new IllegalStateException("Числа ещё неизвестны!");
+            throw new IllegalStateException("Numbers are now unknown!");
         }
-        if(Utils.isNumberTooLarge(firstNumber) || Utils.isNumberTooLarge(secondNumber)) {
-            throw new TooLargeNumberException("Одно из чисел слишком большое!");
+        if(isNumberTooLarge(firstNumber) || isNumberTooLarge(secondNumber)) {
+            throw new TooLargeNumberException("Одно из чисел слишко большое!");
         }
     }
 
@@ -89,20 +68,28 @@ public class Engine implements CalculatorModel {
         if (secondNumber.signum() == 0) {
             throw new ArithmeticException("Нельзя делить на ноль!");
         }
-        return firstNumber.divide(secondNumber, 15, RoundingMode.HALF_UP);
+        return firstNumber.divide(secondNumber, 15, RoundingMode.HALF_UP).stripTrailingZeros();
     }
 
     private BigDecimal pow() {
-        if(!Utils.isWhole(secondNumber)) {
-            throw new UnsupportedOperationException("К сожалению, эта программа не умеет считать степени с нецелыми показателями.");
-        }
-        if(Utils.isGreaterThen(secondNumber, new BigDecimal("999999999"))) {
-            throw new TooLargeNumberException
-                    ("Максимальный показатель степени, \nкоторый берёт в расчёт программа: 999999999. \nВы применили показатель больше!");
-        }
+        checkCorrectBeforePow();
         return firstNumber.pow(secondNumber.intValue());
     }
 
+    private void checkCorrectBeforePow() {
+        if(!isWhole(secondNumber)) {
+            throw new UnsupportedOperationException("К сожалению, эта программа не умеет считать степени с нецелыми показателями.");
+        }
+        if(isGreaterThen(secondNumber, new BigDecimal(20))) {
+            throw new TooLargeNumberException
+                    ("Максимальный показатель степени, \nкоторый берёт в расчёт программа: 20. \nВы применили показатель больше!");
+        } else if(isGreaterThen(firstNumber, new BigDecimal(1000))
+                && isGreaterThen(secondNumber, new BigDecimal(5))) {
+            throw new TooLargeNumberException
+                    ("Если число больше 1000, то максимальная степень, \nв которую может возвести число данная программа — 10, вы применили степень больше!");
+        }
+    }
+    
     /**
      * @throws ArithmeticException if firstNumber is less than zero
      * */
@@ -112,12 +99,5 @@ public class Engine implements CalculatorModel {
             throw new ArithmeticException("Нельзя вычислить квадратный корень из отрицательного числа!");
         }
         return firstNumber.sqrt(mathContext).stripTrailingZeros();
-    }
-
-    @Override
-    public String toString() {
-        return "firstNumber = " + firstNumber.toPlainString() +
-                "; operation = " + operation +
-                "; secondNumber = " + secondNumber.toPlainString();
     }
 }

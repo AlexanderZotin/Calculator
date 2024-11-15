@@ -4,13 +4,15 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+
+import lombok.Getter;
+import lombok.NonNull;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionListener;
 
 public class Window extends JFrame implements View {
     private JPanel centralPanel;
@@ -18,29 +20,27 @@ public class Window extends JFrame implements View {
     private JPanel panelForLabels;
     private final JLabel mainDisplay = new JLabel("0");
     private final JLabel secondDisplay = new JLabel();
-    private final JButton go = new JButton("=");
+    private final @Getter JButton goButton = new JButton("=");
     private JButton[][] buttons;
 
     public Window() {
-        SwingUtilities.invokeLater(() -> {
-            setTitle("Калькулятор. ©А.А Зотин, 2024");
-            JPanel windowContent = new JPanel(new BorderLayout());
-            centralPanel = new JPanel(new GridLayout(5, 3));
-            panelForActionButtons = new JPanel(new GridLayout(5, 1));
-            panelForLabels = new JPanel(new BorderLayout());
+        setTitle("Калькулятор. ©А.А Зотин, 2024");
+        JPanel windowContent = new JPanel(new BorderLayout());
+        centralPanel = new JPanel(new GridLayout(5, 3));
+        panelForActionButtons = new JPanel(new GridLayout(5, 1));
+        panelForLabels = new JPanel(new BorderLayout());
 
-            createButtons();
-            createDisplays();
+        createButtons();
+        createDisplays();
 
-            windowContent.add("North", panelForLabels);
-            windowContent.add("Center", centralPanel);
-            windowContent.add("East", panelForActionButtons);
-            windowContent.add("South", go);
+        windowContent.add("North", panelForLabels);
+        windowContent.add("Center", centralPanel);
+        windowContent.add("East", panelForActionButtons);
+        windowContent.add("South", goButton);
 
-            setContentPane(windowContent);
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            pack();
-        });
+        setContentPane(windowContent);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        pack();
     }
 
     private void createButtons() {
@@ -91,27 +91,15 @@ public class Window extends JFrame implements View {
     }
 
     @Override
-    public void setVisible(boolean visible) {
-        super.setVisible(true);
-        if(visible) setLocationRelativeTo(null);
-    }
-
-    @Override
-    public void subscribeToListener(ActionListener listener) {
-        SwingUtilities.invokeLater(() -> {
-            go.addActionListener(listener);
-            for (JButton[] currentArray : buttons) {
-                for (JButton current : currentArray) {
-                    current.addActionListener(listener);
-                }
+    public void subscribeToListener(@NonNull Listener listener) {
+        goButton.addActionListener(listener);
+        for (JButton[] currentArray : buttons) {
+            for (JButton current : currentArray) {
+                current.addActionListener(listener);
             }
-        });
+        }
     }
-
-    public JButton getGoButton() {
-        return go;
-    }
-
+    
     public JButton getArrowButton() {
         return buttons[0][0];
     }
@@ -126,5 +114,11 @@ public class Window extends JFrame implements View {
 
     public JButton getPointButton() {
         return buttons[1][11];
+    }
+    
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(true);
+        if(visible) setLocationRelativeTo(null);
     }
 }
